@@ -6,6 +6,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import RoleSelect from "./pages/RoleSelect";
 import SkillSelect from "./pages/SkillSelect";
+import Dashboard from "./pages/Dashboard";
+import MentorProfile from "./pages/MentorProfile";
+import Bookmarks from "./pages/Bookmarks";
 
 function App() {
   return (
@@ -16,6 +19,9 @@ function App() {
         <Route path="/register" element={<AuthPage />} />
         <Route path="/role-select" element={<RoleSelect />} />
         <Route path="/skill-select" element={<SkillSelect />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/mentor/:id" element={<MentorProfile />} />
+        <Route path="/bookmarks" element={<Bookmarks />} />
       </Routes>
     </BrowserRouter>
   );
