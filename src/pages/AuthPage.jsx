@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api, { parseError } from '../services/api';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,12 +11,32 @@ const AuthPage = () => {
     name: '',
     email: '',
     password: '',
-    role: 'User',
+    role: 'learner', // backend accepts mentor|learner|both
     skills: []
   });
 
-  // Pre-defined skills for selection
-  const availableSkills = ["React", "Node.js", "MongoDB", "Express", "Tailwind"];
+  // Skills fetched from backend
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [skillsByCategory, setSkillsByCategory] = useState({});
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await api.get("/skills");
+        setAvailableSkills(res.data);
+        // Group skills by category
+        const grouped = {};
+        res.data.forEach(skill => {
+          if (!grouped[skill.category]) grouped[skill.category] = [];
+          grouped[skill.category].push(skill);
+        });
+        setSkillsByCategory(grouped);
+      } catch (err) {
+        console.error("Failed to fetch skills", err);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,27 +51,44 @@ const AuthPage = () => {
     });
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = isLogin 
-      ? 'http://localhost:5000/api/auth/login' 
-      : 'http://localhost:5000/api/auth/register';
-    
     try {
-      // Important: withCredentials allows cookies to be sent/received
-      const res = await axios.post(url, formData, { withCredentials: true });
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+            skills: formData.skills,
+          };
+      const res = await api.post(endpoint, payload); // api instance adds baseURL & auth
+
+      // Save token and user data for both login and registration
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data));
+      }
+
       alert(`Success: Welcome ${res.data.name}!`);
+      navigate('/dashboard');
     } catch (err) {
-      alert(err.response?.data?.message || 'An error occurred');
+      const errorMsg = parseError(err);
+      alert(errorMsg);
     }
   };
 
   const handleForgotPassword = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/forgot-password', { email: formData.email });
-      alert('OTP sent to your email!');
+      // If you have a forgot password endpoint, update here. Otherwise, show a message.
+      alert('Forgot password feature coming soon.');
     } catch (err) {
-      alert('Error sending OTP');
+      const errorMsg = parseError(err);
+      alert(errorMsg);
     }
   };
 
@@ -87,30 +125,41 @@ const AuthPage = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-2 bg-[#0B1C2D] border border-gray-600 rounded focus:outline-none focus:border-[#9B4D5E]"
                   >
-                    <option value="User">User</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Manager">Manager</option>
+                    <option value="learner">Learner</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="both">Both</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Select Skills</label>
-                  <div className="flex flex-wrap gap-2">
-                    {availableSkills.map(skill => (
-                      <button
-                        type="button"
-                        key={skill}
-                        onClick={() => handleSkillChange(skill)}
-                        className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                          formData.skills.includes(skill)
-                            ? 'bg-[#9B4D5E] border-[#9B4D5E] text-white'
-                            : 'bg-transparent border-gray-500 text-gray-300'
-                        }`}
-                      >
-                        {skill}
-                      </button>
-                    ))}
-                  </div>
+                  {Object.keys(skillsByCategory).length === 0 ? (
+                    <div className="text-slate-400">Loading skills...</div>
+                  ) : (
+                    <div className="space-y-4">
+                      {Object.entries(skillsByCategory).map(([category, skills]) => (
+                        <div key={category}>
+                          <div className="font-semibold text-[#9B4D5E] mb-2">{category}</div>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {skills.map(skill => (
+                              <button
+                                type="button"
+                                key={skill._id}
+                                onClick={() => handleSkillChange(skill.name)}
+                                className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                                  formData.skills.includes(skill.name)
+                                    ? 'bg-[#9B4D5E] border-[#9B4D5E] text-white shadow-md scale-105'
+                                    : 'bg-[#1E293B] border-gray-500 text-gray-300 hover:border-[#9B4D5E] hover:bg-[#253248]'
+                                }`}
+                              >
+                                {skill.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}

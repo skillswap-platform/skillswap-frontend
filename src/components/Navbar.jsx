@@ -4,6 +4,14 @@ import { ArrowLeftRight, Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const token = localStorage.getItem('token');
+  const user = token ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  };
 
   return (
     <nav className="bg-[#0B1C2D] border-b border-white/5 px-6 md:px-10 py-4">
@@ -43,17 +51,27 @@ export default function Navbar() {
             Messages
           </NavLink>
 
-          <Link to="/login" className="hover:text-white transition">
-            Log in
-          </Link>
+          {token ? (
+            <button
+              onClick={handleLogout}
+              className="hover:text-white transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className="hover:text-white transition">
+                Log in
+              </Link>
 
-          <Link
-            to="/register"
-            className="bg-[#9B4D5E] text-white px-4 py-2 rounded-lg
-                       hover:bg-[#B35F73] transition shadow-md"
-          >
-            Sign up
-          </Link>
+              <Link
+                to="/register"
+                className="bg-[#9B4D5E] text-white px-4 py-2 rounded-lg hover:bg-[#B35F73] transition shadow-md"
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Icon */}
@@ -88,18 +106,25 @@ export default function Navbar() {
             Messages
           </NavLink>
 
-          <Link to="/login" onClick={() => setIsOpen(false)}>
-            Log in
-          </Link>
+          {token ? (
+            <button onClick={handleLogout} className="text-left">
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" onClick={() => setIsOpen(false)}>
+                Log in
+              </Link>
 
-          <Link
-            to="/register"
-            className="bg-[#9B4D5E] text-white px-4 py-2 rounded-lg text-center
-                       hover:bg-[#B35F73] transition"
-            onClick={() => setIsOpen(false)}
-          >
-            Sign up
-          </Link>
+              <Link
+                to="/register"
+                className="bg-[#9B4D5E] text-white px-4 py-2 rounded-lg text-center hover:bg-[#B35F73] transition"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>

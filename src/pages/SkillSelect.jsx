@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, ArrowRight } from "lucide-react";
+import api from "../services/api";
 
-// You can add more skills here later
-const SKILLS_LIST = [
-  "Web Development", "React.js", "Node.js", "Java", "Python", 
-  "Data Science", "UI/UX Design", "Photography", "Digital Marketing", 
-  "Public Speaking", "Guitar", "Cooking", "Fitness", "Financial Planning",
-  "Graphic Design", "Video Editing", "Machine Learning"
-];
+
 
 export default function SkillSelection() {
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await api.get("/skills");
+        setSkills(res.data.map(skill => typeof skill === 'string' ? skill : skill.name || JSON.stringify(skill)));
+      } catch (err) {
+        console.error("Failed to fetch skills", err);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   const toggleSkill = (skill) => {
     if (selectedSkills.includes(skill)) {
@@ -23,9 +31,10 @@ export default function SkillSelection() {
   };
 
   const handleContinue = () => {
-    // Logic to save skills would go here
     navigate("/dashboard");
   };
+
+  if (!skills.length) return <div className="text-white p-10">Loading skills...</div>;
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12 relative">
@@ -34,10 +43,9 @@ export default function SkillSelection() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">What are your interests?</h2>
           <p className="text-[#CBD5E1] text-lg">Select at least 3 skills you want to learn or teach.</p>
         </div>
-
         {/* Skills Grid */}
         <div className="flex flex-wrap gap-4 justify-center mb-12">
-          {SKILLS_LIST.map((skill) => {
+          {skills.map((skill) => {
             const isSelected = selectedSkills.includes(skill);
             return (
               <button
@@ -61,7 +69,6 @@ export default function SkillSelection() {
             );
           })}
         </div>
-
         {/* Action Buttons */}
         <div className="flex justify-center gap-6 items-center">
           <button 
@@ -70,7 +77,6 @@ export default function SkillSelection() {
           >
             Back
           </button>
-          
           <button
             onClick={handleContinue}
             disabled={selectedSkills.length === 0}

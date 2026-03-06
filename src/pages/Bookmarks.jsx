@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../api';
 
 export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([]);
 
-  const userId = "USER_ID_HERE"; // later from auth
-
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/users/${userId}/bookmarks`)
+    api
+      .get('/users/bookmarks')
       .then((res) => setBookmarks(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        const msg = err.response?.data?.error || err.message || 'Failed to load bookmarks';
+        alert(msg);
+      });
   }, []);
 
   return (

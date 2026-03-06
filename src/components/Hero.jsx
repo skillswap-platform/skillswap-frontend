@@ -30,6 +30,14 @@ export default function Hero() {
             <button className="w-full sm:w-auto flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-3.5 rounded-lg font-medium hover:bg-white/5 transition text-center">
               Find a Skill Swap <ArrowRight size={18} />
             </button>
+
+            {localStorage.getItem('user') && (
+              <Link to={`/mentor/${JSON.parse(localStorage.getItem('user'))._id}`}>
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 border border-[#9B4D5E] text-[#9B4D5E] bg-white px-8 py-3.5 rounded-lg font-bold hover:bg-gray-100 transition text-center">
+                  My Profile
+                </button>
+              </Link>
+            )}
           </div>
         </div>
 

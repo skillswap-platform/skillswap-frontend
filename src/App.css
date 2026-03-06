@@ -3,3 +3,25 @@
 body{
   font-family: 'Poppins',sans-serif;
 }
+html, body, #root {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0B1C2D 60%, #9B4D5E 100%);
+  animation: gradientMove 12s ease-in-out infinite alternate;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.glass-card {
+  background: rgba(22, 42, 64, 0.7);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(155,77,94,0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(155,77,94,0.18);
+}

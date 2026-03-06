@@ -2,13 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from './pages/AuthPage';
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import RoleSelect from "./pages/RoleSelect";
-import SkillSelect from "./pages/SkillSelect";
 import Dashboard from "./pages/Dashboard";
 import MentorProfile from "./pages/MentorProfile";
 import Bookmarks from "./pages/Bookmarks";
+import Browse from "./pages/Browse";
+import Messages from "./pages/Messages";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -17,11 +16,12 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
-        <Route path="/role-select" element={<RoleSelect />} />
-        <Route path="/skill-select" element={<SkillSelect />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/mentor/:id" element={<MentorProfile />} />
         <Route path="/bookmarks" element={<Bookmarks />} />
+        <Route path="/browse" element={<Browse />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
