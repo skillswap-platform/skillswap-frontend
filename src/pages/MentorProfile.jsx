@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 import api from '../services/api';
+import DashboardHeader from "../components/DashboardHeader";
 
 function getCurrentUserId() {
   const user = localStorage.getItem('user');
@@ -16,7 +17,7 @@ export default function MentorProfile() {
   const { id } = useParams();
   const [mentor, setMentor] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState({ bio: "", skills: [], socialLinks: {}, youtubeLinks: [] });
+  const [form, setForm] = useState({ bio: "", skills: [], socialLinks: {}, youtubeLinks: [], availability: "" });
   const [allSkills, setAllSkills] = useState([]);
   const currentUserId = getCurrentUserId();
 
@@ -30,6 +31,7 @@ export default function MentorProfile() {
           skills: userRes.data.skills || [],
           socialLinks: userRes.data.socialLinks || {},
           youtubeLinks: userRes.data.youtubeLinks || [],
+          availability: userRes.data.availability || "",
         });
         const skillsRes = await api.get("/skills");
         setAllSkills(skillsRes.data.map(s => s.name));
@@ -90,8 +92,10 @@ export default function MentorProfile() {
   if (!mentor) return <div className="text-white p-10">Loading...</div>;
 
   return (
-    <div className="min-h-screen font-sans bg-[#0B1C2D] relative overflow-x-hidden selection:bg-[#9B4D5E] selection:text-white flex items-center justify-center">
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+    <div className="min-h-screen font-sans bg-[#0B1C2D] relative overflow-x-hidden selection:bg-[#9B4D5E] selection:text-white flex flex-col">
+      <DashboardHeader title="Profile" />
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="fixed top-20 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#9B4D5E] blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/4 rounded-full"></div>
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[#3b82f6] blur-[150px] opacity-10 translate-y-1/3 -translate-x-1/4 rounded-full"></div>
         <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-[#9B4D5E] blur-[180px] opacity-5 -translate-x-1/2 -translate-y-1/2 rounded-full"></div>
@@ -167,6 +171,18 @@ export default function MentorProfile() {
               </div>
             ))}
             <button type="button" onClick={handleAddYoutube} className="mt-2 px-4 py-1 bg-[#9B4D5E] text-white rounded">Add Video</button>
+          </div>
+          <div className="mb-4">
+            <span className="font-bold">Availability</span>
+            <textarea
+              name="availability"
+              value={form.availability}
+              onChange={handleChange}
+              className="w-full mt-2 p-2 rounded bg-[#0B1C2D] text-white border border-[#9B4D5E]"
+              rows={2}
+              placeholder="e.g., Weekdays 5-8PM, Weekends anytime"
+              required
+            />
           </div>
           <div className="flex gap-4 mt-6">
             <button onClick={handleSave} className="px-6 py-2 bg-[#9B4D5E] text-white rounded font-bold">Save</button>
@@ -252,6 +268,7 @@ export default function MentorProfile() {
           )}
         </React.Fragment>
       )}
+      </div>
       </div>
     </div>
   );

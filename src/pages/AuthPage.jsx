@@ -12,7 +12,8 @@ const AuthPage = () => {
     email: '',
     password: '',
     role: 'learner', // backend accepts mentor|learner|both
-    skills: []
+    skills: [],
+    availability: ''
   });
 
   // Skills fetched from backend
@@ -65,6 +66,7 @@ const AuthPage = () => {
             password: formData.password,
             role: formData.role,
             skills: formData.skills,
+            availability: formData.availability,
           };
       const res = await api.post(endpoint, payload); // api instance adds baseURL & auth
 
@@ -75,7 +77,7 @@ const AuthPage = () => {
       }
 
       alert(`Success: Welcome ${res.data.name}!`);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       const errorMsg = parseError(err);
       alert(errorMsg);
@@ -160,6 +162,18 @@ const AuthPage = () => {
                       ))}
                     </div>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Availability</label>
+                  <textarea
+                    name="availability"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 bg-[#0B1C2D] border border-gray-600 rounded focus:outline-none focus:border-[#9B4D5E] resize-none"
+                    placeholder="e.g., Weekdays 5-8PM, Weekends anytime"
+                    required
+                  />
                 </div>
               </>
             )}

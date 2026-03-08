@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from '../api';
+import DashboardHeader from "../components/DashboardHeader";
 
 export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([]);
@@ -15,8 +16,9 @@ export default function Bookmarks() {
   }, []);
 
   return (
-    <div className="min-h-[80vh] px-6 py-10 text-white">
-      <h1 className="text-3xl font-bold mb-8">Your Bookmarks</h1>
+    <div className="min-h-screen font-sans bg-[#0B1C2D] text-white flex flex-col">
+      <DashboardHeader title="Your Bookmarks" />
+      <div className="relative z-10 px-6 py-10 flex-1">
 
       <div className="grid md:grid-cols-2 gap-6">
         {bookmarks.map((b, index) => (
@@ -37,6 +39,7 @@ export default function Bookmarks() {
             </a>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

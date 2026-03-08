@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import DashboardHeader from "../components/DashboardHeader";
 
 export default function Browse() {
   const [skills, setSkills] = useState([]);
@@ -33,7 +34,8 @@ export default function Browse() {
     : mentors;
 
   return (
-    <div className="min-h-screen font-sans bg-[#0B1C2D] relative overflow-x-hidden selection:bg-[#9B4D5E] selection:text-white">
+    <div className="min-h-screen font-sans bg-[#0B1C2D] relative overflow-x-hidden selection:bg-[#9B4D5E] selection:text-white flex flex-col">
+      <DashboardHeader title="Browse Mentors" />
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#9B4D5E] blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/4 rounded-full"></div>
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[#3b82f6] blur-[150px] opacity-10 translate-y-1/3 -translate-x-1/4 rounded-full"></div>
